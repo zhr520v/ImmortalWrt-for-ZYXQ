@@ -57,6 +57,7 @@ jobs:
     - name: Update & Install feeds
       working-directory: ./openwrt
       run: |
+        git describe --tags
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
