@@ -167,7 +167,6 @@ echo "修改根文件系统相关配置 ... "
 cd $TGT_ROOT
 copy_supplement_files
 extract_glibc_programs
-adjust_docker_config
 adjust_openssl_config
 adjust_getty_config
 adjust_samba_config
