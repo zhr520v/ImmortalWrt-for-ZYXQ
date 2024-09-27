@@ -1,10 +1,10 @@
 config defaults
-	option synflood_protect '1'
-	option drop_invalid '1'
+	option synflood_protect '0'
+	option drop_invalid '0'
 	option fullcone '1'
-	option input 'REJECT'
+	option input 'ACCEPT'
 	option output 'ACCEPT'
-	option forward 'REJECT'
+	option forward 'ACCEPT'
 	option flow_offloading '1'
 
 config zone
