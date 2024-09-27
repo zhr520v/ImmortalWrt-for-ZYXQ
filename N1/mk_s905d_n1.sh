@@ -126,7 +126,7 @@ SSHD_CIPHERS="aes128-gcm@openssh.com,aes256-gcm@openssh.com,aes256-ctr,aes192-ct
 check_depends
 
 SKIP_MB=4
-BOOT_MB=512
+BOOT_MB=256
 ROOTFS_MB=960
 SIZE=$((SKIP_MB + BOOT_MB + ROOTFS_MB))
 create_image "$TGT_IMG" "$SIZE"
@@ -167,6 +167,7 @@ echo "修改根文件系统相关配置 ... "
 cd $TGT_ROOT
 copy_supplement_files
 extract_glibc_programs
+adjust_docker_config
 adjust_openssl_config
 adjust_getty_config
 adjust_samba_config
