@@ -1,4 +1,4 @@
-name: Build LEDE for ZYXQ
+name: Build ImmortalWrt-for-ZYXQ for ZYXQ
 
 on:
   workflow_dispatch:
