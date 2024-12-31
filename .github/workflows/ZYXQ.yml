@@ -60,7 +60,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo -E apt-get -qq update -y  # 更新包列表
-        sudo -E apt-get -qq install -y $(curl -fsSL https://raw.githubusercontent.com/zhr520v/ImmortalWrt-for-ZYXQ/master/ZYXQ/2305)  # 安装依赖
+        sudo -E apt-get -qq install -y $(curl -fsSL https://raw.githubusercontent.com/zhr520v/LEDE-for-ZYXQ/master/ZYXQ/APT)  # 安装依赖
         sudo -E apt-get -qq autoremove --purge  # 自动删除不需要的包
         sudo -E apt-get -qq clean  # 清理缓存
         sudo timedatectl set-timezone "Asia/Shanghai"  # 设置时区
