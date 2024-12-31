@@ -4,28 +4,30 @@ on:
   workflow_dispatch:
    inputs:
       ssh:
-        description: 'SSH connection to Actions'
-        required: true
-        default: 'false'
+        description: 'SSH connection to Actions'  # SSH连接到Actions
+        required: true  # 必需参数
+        default: 'false'  # 默认值为false
 #  schedule:
-#    - cron: "0 0 */3 * *"
+#    - cron: "0 0 */3 * *"  # 定时编译（已注释）
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
-  CONFIG_FILE: ZYXQ/.config
-  DIY_SH: ZYXQ/diy.sh
-  FILES: ZYXQ/files
+  REPO_URL: https://github.com/coolsnowwolf/lede  # 仓库URL
+  REPO_BRANCH: master  # 分支名称
+  CONFIG_FILE: ZYXQ/.config  # 配置文件路径
+  DIY_SH: ZYXQ/diy.sh  # 自定义脚本路径
+  FILES: ZYXQ/files  # 文件路径
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-20.04  # 使用Ubuntu 20.04运行
 
     steps:
     - name: Checkout
+      # 检出代码
       uses: actions/checkout@main
 
     - name: Free up space
+      # 释放磁盘空间
       uses: jlumbroso/free-disk-space@main
       with:
         tool-cache: false
@@ -37,58 +39,66 @@ jobs:
         swap-storage: true
 
     - name: Initialize environment
+      # 初始化环境
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo -E apt-get -qq update -y
-        sudo -E apt-get -qq install -y $(curl -fsSL https://raw.githubusercontent.com/zhr520v/ImmortalWrt-for-ZYXQ/master/ZYXQ/2305)
-        sudo -E apt-get -qq autoremove --purge
-        sudo -E apt-get -qq clean
-        sudo timedatectl set-timezone "Asia/Shanghai"
-        sudo mkdir -p /workdir
-        sudo chown $USER:$GROUPS /workdir
+        sudo -E apt-get -qq update -y  # 更新包列表
+        sudo -E apt-get -qq install -y $(curl -fsSL https://raw.githubusercontent.com/zhr520v/ImmortalWrt-for-ZYXQ/master/ZYXQ/2305)  # 安装依赖
+        sudo -E apt-get -qq autoremove --purge  # 自动删除不需要的包
+        sudo -E apt-get -qq clean  # 清理缓存
+        sudo timedatectl set-timezone "Asia/Shanghai"  # 设置时区
+        sudo mkdir -p /workdir  # 创建工作目录
+        sudo chown $USER:$GROUPS /workdir  # 修改目录权限
 
     - name: Clone source code
+      # 克隆源码
       working-directory: /workdir
       run: |
-        git clone $REPO_URL -b $REPO_BRANCH --single-branch --depth=1 openwrt
-        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        git clone $REPO_URL -b $REPO_BRANCH --single-branch --depth=1 openwrt  # 克隆源码
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt  # 创建符号链接
 
     - name: Update & Install feeds
+      # 更新并安装feeds
       working-directory: ./openwrt
       run: |
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
+        ./scripts/feeds update -a  # 更新feeds
+        ./scripts/feeds install -a  # 安装feeds
 
     - name: Load custom config
+      # 加载自定义配置
       run: |
-        [ -e $FILES ] && mv $FILES openwrt/files
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_SH
+        [ -e $FILES ] && mv $FILES openwrt/files  # 移动自定义文件
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config  # 移动配置文件
+        chmod +x $DIY_SH  # 赋予自定义脚本执行权限
         cd openwrt
-        $GITHUB_WORKSPACE/$DIY_SH
+        $GITHUB_WORKSPACE/$DIY_SH  # 执行自定义脚本
 
     - name: SSH connect to Actions
+      # 启用SSH连接
       uses: P3TERX/ssh2actions@main
       if: (github.event.inputs.ssh == 'true') || contains(github.event.action, 'ssh')
 
     - name: Download package
+      # 下载依赖包
       working-directory: ./openwrt
       run: |
-        make defconfig
-        make download -j8
-        find dl -size -1024c -exec ls -l {} \;
-        find dl -size -1024c -exec rm -f {} \;
+        make defconfig  # 生成默认配置
+        make download -j8  # 下载依赖包
+        find dl -size -1024c -exec ls -l {} \;  # 查找小于1KB的文件
+        find dl -size -1024c -exec rm -f {} \;  # 删除小于1KB的文件
 
     - name: Compile the firmware
+      # 编译固件
       run: |
-        chmod -R 755 openwrt
+        chmod -R 755 openwrt  # 修改权限
         cd openwrt
-        echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 || make -j1 V=s
-        echo "compile_status=success" >> $GITHUB_ENV
+        echo -e "$(nproc) thread compile"  # 输出编译线程数
+        make -j$(nproc) || make -j1 || make -j1 V=s  # 编译固件
+        echo "compile_status=success" >> $GITHUB_ENV  # 设置编译状态
 
     - name: Package armsr as openwrt
+      # 打包固件
       if: ${{ env.compile_status }} == 'success' && !cancelled()
       uses: unifreq/openwrt_packit@master
       env:
@@ -104,6 +114,7 @@ jobs:
         ENABLE_WIFI_K510: 0
 
     - name: Upload firmware to release
+      # 上传固件到发布页面
       uses: softprops/action-gh-release@master
       if: ${{ env.PACKAGED_STATUS == 'success' }} && !cancelled()
       env:
@@ -119,6 +130,7 @@ jobs:
           密码: password
 
     - name: Delete old releases
+      # 删除旧的工作流运行记录
       uses: Mattraks/delete-workflow-runs@v2
       with:
         retain_days: 0
