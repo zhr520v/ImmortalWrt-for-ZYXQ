@@ -74,12 +74,24 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH --single-branch --depth=1 openwrt  # 克隆源码
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt  # 创建符号链接
 
+    - name: src-git-small-package
+      # 添加软件包订阅源
+      working-directory: ./openwrt
+      run: |
+        sed -i '$a src-git smpackage https://github.com/kenzok8/small-package' feeds.conf.default
+
     - name: Update & Install feeds
       # 更新并安装feeds
       working-directory: ./openwrt
       run: |
         ./scripts/feeds update -a  # 更新feeds
         ./scripts/feeds install -a  # 安装feeds
+
+    - name: Delete unwanted packages
+      # 删除冲突的包
+      working-directory: ./openwrt
+      run: |
+        rm -rf feeds/smpackage/{base-files,dnsmasq,firewall*,fullconenat,libnftnl,nftables,ppp,opkg,ucl,upx,vsftpd*,miniupnpd-iptables,wireless-regdb}
 
     - name: Load custom config
       # 加载自定义配置
