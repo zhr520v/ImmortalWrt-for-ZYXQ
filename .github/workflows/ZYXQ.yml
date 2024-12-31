@@ -97,7 +97,7 @@ jobs:
         KERNEL_AUTO_LATEST: false
         PACKAGE_SOC: diy
         GZIP_IMGS: .xz
-        SCRIPT_DIY_PATH: N1/mk_s905d_n1.sh
+        SCRIPT_DIY_PATH: ZYXQ/mk_s912_zyxq.sh
         WHOAMI: zhr520v
         SW_FLOWOFFLOAD: 0
         SFE_FLOW: 0
