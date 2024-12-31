@@ -151,7 +151,7 @@ jobs:
         tag_name: OpenWrt_${{ env.PACKAGED_OUTPUTDATE }}
         files: ${{ env.PACKAGED_OUTPUTPATH }}/*.img.xz
         body: |
-          首次使用建议全新刷写
+          首次使用建议全新刷写 适合章鱼星球
           * 基本信息
           IP: 192.168.80.2
           账户: root
