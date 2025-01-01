@@ -125,8 +125,8 @@ jobs:
       uses: unifreq/openwrt_packit@master
       env:
         OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
-        KERNEL_VERSION_NAME: 5.15.173
-        KERNEL_AUTO_LATEST: false
+        KERNEL_VERSION_NAME: 6.6.y
+        KERNEL_AUTO_LATEST: true
         PACKAGE_SOC: s912
         GZIP_IMGS: .xz
         SCRIPT_S912: ZYXQ/mk_s912_zyxq.sh
