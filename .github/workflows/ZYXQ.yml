@@ -134,6 +134,18 @@ jobs:
         SW_FLOWOFFLOAD: 0
         SFE_FLOW: 0
 
+    - name: Package Armvirt as OpenWrt
+      uses: ophub/amlogic-s9xxx-openwrt@main
+      with:
+        openwrt_path: openwrt/bin/targets/*/*/*rootfs.tar.gz
+        openwrt_board: s912
+        openwrt_kernel: 5.15.178
+        kernel_usage: stable
+        auto_kernel: false
+        openwrt_size: 
+        builder_name: darren
+        
+
     - name: Upload firmware to release
       # 上传固件到发布页面
       uses: softprops/action-gh-release@master
